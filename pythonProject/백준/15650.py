@@ -10,7 +10,7 @@ def dfs(start):
         return
 
 
-    for i in range(start, n + 1):
+    for i in range(start, n + 1): #start 시작인것이 포인트
         if i not in s:
             s.append(i)
             dfs(i + 1)
@@ -27,7 +27,7 @@ def solve(depth, idx, N, M):
     if depth == M:
         print(' '.join(map(str, out)))
         return
-    for i in range(idx, N):
+    for i in range(idx, N): #idx 시작인것이 포인트
         if not visited[i]:
             visited[i] = True
             out.append(i+1)
