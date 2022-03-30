@@ -26,7 +26,7 @@ def dfs(lev, idx, N, M ):
             visited[i] = True
             result.append(lst[i])
             #idx도 같이 증가 시켜야한다
-            dfs(lev+1, idx+1, N, M)
+            dfs(lev+1, i+1, N, M)
             result.pop()
             visited[i] = False
 
