@@ -242,5 +242,5 @@ while True:
         answer = 0
         break
 
-# 출력
+#  출력
 print(answer)
