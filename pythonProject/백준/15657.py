@@ -35,7 +35,7 @@ def solve(depth, idx, N, M):
         return
     for i in range(idx, N):
         out.append(L[i])
-        solve(depth+1, i, N, M) # 여기 i + 1을 안해서 같은 것을 허용! idx를 계속 늘리니깐 그래도 중복은 없다!
+        solve(depth+1, i, N, M) # 여기 i + 1을 안해서 같은 것을 허용! idx를 계속 늘리니깐
         out.pop()
 
 solve(0, 0, N, M)
