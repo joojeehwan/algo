@@ -12,11 +12,12 @@ broken = list(map(int, input().split()))
 
 min_count = abs(100 - target)
 
+#이렇게 적는것이 포인트
 for nums in range(1000001):
     nums = str(nums)
     #왜 str로 바꾸나?! nums 중에서 하나의 숫자만 뽑기 위해서! 그렇게 한 것!
     # str로 안바꾸면 하나의 숫자를 뽑을 수가 없으니깐!
-    # print(nums)
+    # 각 숫자 하나씪 확인!
     for j in range(len(nums)):
         # 각 숫자가 고장났는지 확인 후, 고장 났으면 break
         if int(nums[j]) in broken:
@@ -29,6 +30,7 @@ for nums in range(1000001):
             min_count = min(min_count, abs(int(nums) - target) + len(nums))
 
 print(min_count)
+
 
 '''
 
