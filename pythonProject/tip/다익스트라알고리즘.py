@@ -59,7 +59,7 @@ def dijkstra(start):
 
         #선택된 노드의 인접한 노드들 확인
         for i in graph[now]:
-            cost = dist + i[i] #해당 노드를 거쳐 갈 때 거리
+            cost = dist + i[1] #해당 노드를 거쳐 갈 때 거리
             #선택된 노드를 거쳐서 가는것이 현재 가는 거리보다 작다면 갱신
             if cost < distance[i[0]]:
                 distance[i[0]] = cost
