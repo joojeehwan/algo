@@ -17,37 +17,37 @@ https://developer-ellen.tistory.com/50?category=879172
 '''
 
 
-# def dfs(lev, idx):
-#     global answer
-#     #재귀 종료 조건 -> 팀에 속하 인원이 n // 2명이 다 되면
-#     if lev == n // 2:
-#         pow1, pow2 = 0, 0
-#         for i in range(n):
-#             for j in range(n):
-#                 #방문한 곳은 스타트팀!
-#                 if visited[i] and visited[j]:
-#                     pow1 += MAP[i][j]
-#                 elif not visited[i] and not visited[j]:
-#                     pow2 += MAP[i][j]
-#         answer = min(answer, abs(pow1 - pow2))
-#         return
-#
-#     #재귀 도는 부분, idx를 증가하면서 중복을 허락하지 않게 되는것! 1,2랑 2,1은 같은것!
-#     for i in range(idx, n):
-#         if not visited[i]:
-#             visited[i] = True
-#             dfs(lev + 1, i + 1)
-#             visited[i] = False
-#
-#
-# n = int(input())
-#
-# visited = [False for _ in range(n)]
-# MAP = [list(map(int, input().split())) for _ in range(n)]
-# answer = int(1e9)
-#
-# dfs(0, 0)
-# print(answer)
+def dfs(lev, idx):
+    global answer
+    #재귀 종료 조건 -> 팀에 속한 인원이 n // 2명이 다 되면
+    if lev == n // 2:
+        pow1, pow2 = 0, 0
+        for i in range(n): #이중 포문을 돌려서 i,j // j,i를 둘다 인덱스에 넣을 수 있게
+            for j in range(n):
+                #방문한 곳은 스타트팀!
+                if visited[i] and visited[j]:
+                    pow1 += MAP[i][j]
+                elif not visited[i] and not visited[j]:
+                    pow2 += MAP[i][j]
+        answer = min(answer, abs(pow1 - pow2))
+        return
+
+    #재귀 도는 부분, idx를 증가하면서 중복을 허락하지 않게 되는것! 1,2랑 2,1은 같은것!
+    for i in range(idx, n):
+        if not visited[i]:
+            visited[i] = True
+            dfs(lev + 1, i + 1)
+            visited[i] = False
+
+
+n = int(input())
+
+visited = [False for _ in range(n)]
+MAP = [list(map(int, input().split())) for _ in range(n)]
+answer = int(1e9)
+
+dfs(0, 0)
+print(answer)
 
 
 #dfs 재귀 사용해서 하는게 아닌 방법
