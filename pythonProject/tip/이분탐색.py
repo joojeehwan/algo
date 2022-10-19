@@ -17,6 +17,7 @@ while left<=right:
         left = mid+1
 
 
+#이분탐색 공부 10.19
 
 def binarySearch(array, target, left, right):
     middle_idx = (left+right)//2
