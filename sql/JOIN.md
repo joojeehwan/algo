@@ -138,6 +138,48 @@ ORDER BY ANIMAL_ID;
 
 ![image-20220719231158411](JOIN.assets/image-20220719231158411.png)
 
+
+
+## 오라클 풀이 
+
+ANIMAL_OUTS 테이블의 데이터 중 ANIMAL_INS에 없는 데이터를 조회합니다.
+
+### sol1) NOT EXISTS 활용
+
+- ANIMAL_OUTS 테이블에 NOT EXISTS문을 적용합니다.
+- ID 순으로 정렬합니다.
+
+```sql
+SELECT O.ANIMAL_ID, O.NAME
+  FROM ANIMAL_OUTS O
+ WHERE NOT EXISTS (SELECT 1
+                     FROM ANIMAL_INS I
+                    WHERE I.ANIMAL_ID = O.ANIMAL_ID
+                  )
+ ORDER BY ANIMAL_ID
+;
+```
+
+
+
+### sol2) OUTER JOIN, IS NULL 활용
+
+- ANIMAL_OUTS과 ANIMAL_INS를 OUTER JOIN하고,
+- ANIMAL_INS의 키에 IS NULL 조건을 걸어줍니다.
+- ID 순으로 정렬합니다.
+
+````sql
+SELECT O.ANIMAL_ID, O.NAME
+  FROM ANIMAL_OUTS O
+     , ANIMAL_INS  I
+ WHERE O.ANIMAL_ID = I.ANIMAL_ID(+)
+   AND I.ANIMAL_ID IS NULL
+ ORDER BY ANIMAL_ID
+;
+````
+
+
+
 ----
 
 ----
@@ -206,6 +248,25 @@ ON INS.ANIMAL_ID = OUTS.ANIMAL_ID
 WHERE INS.DATETIME > OUTS.DATETIME
 ORDER BY INS.DATETIME
 ```
+
+
+
+## 오라클 풀이
+
+보호시작일보다 입양일이 빠른 동물을 조회합니다.
+
+- ANIMAL_INS와 ANIMAL_OUT을 INNER JOIN하고,
+- 보호시작일 > 입양일 조건을 걸어줍니다.
+- 보호시작일 순으로 정렬합니다.
+
+````SQL
+SELECT I.ANIMAL_ID, I.NAME
+  FROM ANIMAL_INS  I 
+     , ANIMAL_OUTS O
+ WHERE I.ANIMAL_ID = O.ANIMAL_ID
+   AND I.DATETIME > O.DATETIME
+ ORDER BY I.DATETIME
+````
 
 
 
@@ -297,6 +358,56 @@ LIMIT 구를 이용해 상위 N개 행만 조회
 
 - limit 3, 7 : 위에서 3부터 7까지의 정보 추출
 - limit 5 : 위에서 5개의 정보 추출
+
+
+
+## 오라클 풀이
+
+* ANIMAL_INS 테이블의 데이터 중 ANIMAL_OUTS에 없는 데이터를 조회해서 보호시작일 순으로 3행을 조회합니다. 
+* "없어진 기록 찾기" 문제에서 처럼 NOT EXISTS 문이나 OUTER JOIN, IS NULL을 활용할 수 있습니다.
+
+### sol1) NOT EXISTS 활용
+
+- ANIMAL_INS 테이블에 NOT EXISTS문을 적용한 다음 보호시작일 순으로 정렬하고,
+- 서브쿼리로 감싼 다음 ROWNUM <= 3 조건을 걸어 상위 3개 행을 조회합니다.
+
+````sql
+SELECT NAME, DATETIME
+  FROM (
+        SELECT I.NAME, I.DATETIME
+          FROM ANIMAL_INS I
+         WHERE NOT EXISTS (SELECT 1
+                             FROM ANIMAL_OUTS O
+                            WHERE O.ANIMAL_ID = I.ANIMAL_ID
+                          )
+         ORDER BY I.DATETIME
+       )
+ WHERE ROWNUM <= 3
+;
+````
+
+
+
+### sol2) OUTER JOIN, IS NULL 활용
+
+- ANIMAL_INS와 ANIMAL_OUT을 OUTER JOIN하고,
+- ANIMAL_OUTS의 키에 IS NULL 조건을 걸어줍니다.
+- 서브쿼리로 감싼 다음 ROWNUM <= 3 조건을 걸어 상위 3개 행을 조회합니다.
+
+```sql
+SELECT NAME, DATETIME
+  FROM (
+        SELECT I.NAME, I.DATETIME
+          FROM ANIMAL_INS I
+             , ANIMAL_OUTS O
+         WHERE I.ANIMAL_ID = O.ANIMAL_ID(+)
+           AND O.ANIMAL_ID IS NULL
+         ORDER BY I.DATETIME
+       )
+ WHERE ROWNUM <= 3
+;
+
+```
 
 
 
@@ -409,3 +520,39 @@ ORDER BY INS.ANIMAL_ID
 WHERE절에 서브쿼리를 추가해 SEX_UPON_OUTCOME이 'Spayed' 또는 'Neutered'를 포함하고
 
 ANIMAL_ID가 서브 쿼리 안( NAMSEX_UPON_INTAKE이 'Intact'를 포함하는 ANIMAL_ID)의 ANIMAL_ID에 존재한다면 조회한다
+
+
+
+## 오라클 풀이 
+
+- ANIMAL_INS와 ANIMAL_OUT을 INNER JOIN한 다음,
+- ANIMAL_INS의 성별 키워드가 Intact로 시작하는 조건을 걸고,
+- ANIMAL_OUTS의 성별 키워드가 Spayed 또는 Neutered로 시작하는 조건을 걸어줍니다. (OR 조건은 반드시 괄호로 감싸야 합니다.)
+- ID, 종, 이름 순으로 정렬합니다.
+
+```sql
+SELECT I.ANIMAL_ID, I.ANIMAL_TYPE, I.NAME
+  FROM ANIMAL_INS  I
+     , ANIMAL_OUTS O
+ WHERE I.ANIMAL_ID = O.ANIMAL_ID
+   AND I.SEX_UPON_INTAKE LIKE 'Intact%'
+   AND (O.SEX_UPON_OUTCOME LIKE 'Spayed%'
+     OR O.SEX_UPON_OUTCOME LIKE 'Neutered%')
+ ORDER BY ANIMAL_ID, ANIMAL_TYPE, NAME
+;
+
+```
+
+- 중성화를 거친 동물의 키워드가 Spayed 또는 Neutered로 시작한다는 조건이 명시되어 있기 때문에 각각 LIKE문과 OR 조건을 통해 구현하는 것이 성능상 유리하겠지만, NOT LIKE문을 활용해서 간략하게 표현할 수 있습니다.
+
+````sql
+SELECT I.ANIMAL_ID, I.ANIMAL_TYPE, I.NAME
+  FROM ANIMAL_INS  I
+     , ANIMAL_OUTS O
+ WHERE I.ANIMAL_ID = O.ANIMAL_ID
+   AND I.SEX_UPON_INTAKE LIKE 'Intact%'
+   AND O.SEX_UPON_OUTCOME NOT LIKE 'Intact%'
+ ORDER BY ANIMAL_ID, ANIMAL_TYPE, NAME
+;
+````
+
