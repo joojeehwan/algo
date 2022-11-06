@@ -55,10 +55,25 @@ ORDER BY ANIMAL_ID;
 만일, ANIMAL_ID의 역순으로 정렬하고 싶을 경우에는
 
 ```mysql
-1 SELECT * FROM ANIMAL_INS order by ANIMAL_ID desc; 
+SELECT * FROM ANIMAL_INS order by ANIMAL_ID desc; 
 ```
 
 끝에 **desc**라고 붙입니다. (붙이지 않으면 asc, 즉 오름차순이 기본입니다.)
+
+
+
+## 오라클 풀이
+
+* 동물의 정보를 담은 테이블의 모든 레코드를 ANIMAL_ID순으로 조회하는 SQL문입니다. 
+* SELECT * 으로 모든 칼럼을 선택하며, ORDER BY ANIMAL_ID로 레코드를 ANIMAL_ID순으로 정렬합니다.
+
+```sql
+SELECT * 
+FROM ANIMAL_INS
+ORDER BY ANIMAL_ID;
+```
+
+
 
 -----
 
@@ -102,6 +117,21 @@ ORDER BY ANIMAL_ID;
 ```mysql
 SELECT NAME, DATETIME FROM ANIMAL_INS order by ANIMAL_ID desc;
 ```
+
+
+
+## 오라클 풀이
+
+* 동물의 정보를 담은 테이블에서 모든 동물의 이름과 보호 시작일을 조회하되, ANIMAL_ID의 역순으로 출력합니다. 
+* SELECT로 이름, 보호 시작일을 선택하고 ORDER BY를 사용하여 정렬하되, DESC(Descending, 내림차순을 의미)으로 내림차순 정렬합니다.
+
+
+
+````sql
+SELECT NAME, DATETIME
+FROM ANIMAL_INS
+ORDER BY ANIMAL_ID DESC;
+````
 
 
 
@@ -168,6 +198,23 @@ SELECT ANIMAL_ID, NAME FROM ANIMAL_INS WHERE INTAKE_CONDITION = "Sick" order by 
 
 
 
+## 오라클 풀이
+
+* 아픈 동물은 INTAKE_CONDITION이 Sick인 경우를 의미합니다. 
+* SELECT로 동물의 아이디와 이름을 선택하고, WHERE절로 아픈 동물만 추출하여 출력되는 행을 제한합니다. 
+* 오라클에서 동일한 값을 찾는 비교연산자는 =입니다.
+
+
+
+```sql
+SELECT ANIMAL_ID, NAME
+FROM ANIMAL_INS
+WHERE INTAKE_CONDITION = 'Sick'
+ORDER BY ANIMAL_ID;
+```
+
+
+
 ----
 
 ---
@@ -210,6 +257,18 @@ SELECT ANIMAL_ID, NAME
 FROM ANIMAL_INS
 ORDER BY ANIMAL_ID;
 ````
+
+
+
+## 오라클 풀이
+
+
+
+```sql
+SELECT ANIMAL_ID, NAME
+FROM ANIMAL_INS
+ORDER BY ANIMAL_ID;
+```
 
 
 
@@ -285,6 +344,21 @@ SELECT ANIMAL_ID, NAME, DATETIME from ANIMAL_INS order by NAME asc, DATETIME des
 
 
 
+## 오라클 풀이
+
+* SELECT로 출력할 칼럼인 아이디, 이름, 보호 시작일을 선택합니다. 
+* ORDER BY를 사용하여 이름 순으로 정렬하되 이름이 같다면 보호를 나중에 시작한 동물을 먼저, 즉 내림차순 정렬해야 합니다. 
+* 이름은 디폴트 설정값인 오름차순으로 정렬할 것이므로 NAME만 써주고, 보호 시작일은 뒤에 DESC를 써서 내림차순 정렬임을 명시해줍니다. 
+* DESC는 바로 앞 칼럼인 보호 시작일에만 적용됩니다. 
+
+```sql
+SELECT ANIMAL_ID, NAME, DATETIME
+FROM ANIMAL_INS
+ORDER BY NAME, DATETIME DESC;
+```
+
+
+
 ----
 
 -----
@@ -340,7 +414,18 @@ Jack
 
 
 
+## 오라클 풀이
 
+* 우선 서브 쿼리를 사용하여 보호 시작일로 오름차순 정렬합니다.
+*  보호 시작일로 정렬된 이름 칼럼이 저장된 서브 쿼리로부터 WHERE ROWNUM = 1을 통해 가장 먼저 들어온 동물의 이름이 있는 첫번째 행만 출력하게 됩니다.
+
+````sql
+SELECT NAME
+FROM (SELECT NAME
+     FROM ANIMAL_INS
+     ORDER BY DATETIME)
+WHERE ROWNUM = 1;
+````
 
 
 
