@@ -79,6 +79,22 @@ ORDER BY ANIMAL_TYPE;
 
 
 
+## 오라클 풀이
+
+### sol)
+
+* GROUP BY절을 사용하여 동물의 종에 따라 그룹화를 하고, COUNT 함수를 사용하여 동물의 종마다 행의 개수를 집계합니다. 
+* 고양이(Cat)가 개(Dog)보다 먼저 조회되어야 하므로 ORDER BY절을 사용해 동물의 종으로 정렬하였습니다.
+
+```sql
+SELECT ANIMAL_TYPE, COUNT(ANIMAL_TYPE) count
+FROM ANIMAL_INS
+GROUP BY ANIMAL_TYPE
+ORDER BY ANIMAL_TYPE;
+```
+
+
+
 ----
 
 ---
@@ -192,6 +208,25 @@ HAVING 절로 COUNT가 2이상인 값만 조회
 
 
 
+## 오라클 풀이 
+
+
+
+* 이름이 없는 동물은 집계에서 제외하므로 WHERE절을 사용하여 NAME이 NULL인 아닌 경우만 추출합니다. 
+* 이름으로 그룹화한 후, HAVING절을 사용하여 이름마다 집계한 행의 개수가 2이상인 경우만 추출합니다. 
+* 결과를 이름 순으로 조회하기 위해 ORDER BY절을 사용하였습니다.
+
+````sql
+SELECT NAME, COUNT(NAME)
+FROM ANIMAL_INS
+WHERE NAME IS NOT NULL
+GROUP BY NAME 
+HAVING COUNT(NAME) >= 2
+ORDER BY NAME;
+````
+
+
+
 
 
 ----
@@ -285,6 +320,21 @@ DATETIME 자료형은 (year, month, day, hour, minute, second)로 이뤄짐
 
 - empno BETWEEN 7000 AND 7600 : empno이 7000에서 7600까지인 행만 조회
 - AGE BETWEEN 30 AND 40 : 나이가 30에서 40까지인 행만 조회
+
+## 오라클 풀이
+
+* 서브쿼리에서 보호 시작일로부터 시간을 추출하는데요 00시~23시 형태로 출력하기 위해 'HH24' 포맷을 사용하였습니다. 
+* 이후 WHERE절을 사용하여 9시부터 19시까지에 해당하는 행만 추출합니다.
+* GROUP BY절로 시간별로 그룹화한 후, COUNT 함수를 사용하여 시간별로 발생한 입양건수를 집계합니다.
+
+```sql
+SELECT HOUR, COUNT(*)
+FROM (SELECT TO_CHAR(DATETIME, 'HH24') HOUR
+ FROM ANIMAL_OUTS)
+WHERE HOUR BETWEEN 9 AND 19
+GROUP BY HOUR 
+ORDER BY HOUR;
+```
 
 
 
@@ -402,3 +452,31 @@ WHERE @hour < 23
 ---> hour 변수를 -1로 선언해 22까지 +1씩 증가 시킴 (따라서 hour은 0부터 23까지 생성됨)
 
 DATETIME의 hour과 hour변수의 값이 동일할 때의 행 카운트
+
+
+
+## 오라클 풀이
+
+**코드해석**
+
+* 우선 0부터 23까지의 값을 갖는 HOUR 칼럼을 생성하고 이를 테이블 A라고 합니다. 이 테이블은 다음과 같이 생겼습니다.
+
+![image-20221106115656419](GROUPBY.assets/image-20221106115656419.png)
+
+* 테이블 A와 입양정보 테이블 B를 HOUR 칼럼을 사용하여 LEFT JOIN해줍니다. 입양 기록이 없는 시간도 조인 후 남아 있어야하므로 단순히 INNER JOIN이 아닌 LEFT JOIN을 해줍니다. 
+* 테이블 B에서 입양일로부터 시간을 추출하는 방법은 3번 입양시각 구하기(1)에 나온 방법과 동일합니다. 
+* 조인 후 시간별로 그룹화를 해준 후 시간별로 값이 존재하는 행의 수를 집계합니다. 
+* 이때 COUNT(*)라고 하시면 NULL인 행까지 집계하기 때문에 틀린 답이 됩니다. 값이 존재하는 경우만 집계하기 위해 COUNT(B.DATETIME)이라고 써야 합니다.
+
+```sql
+SELECT A.HOUR, COUNT(B.DATETIME) AS COUNT
+FROM (SELECT LEVEL-1 AS HOUR
+          FROM DUAL
+        CONNECT BY LEVEL <=24) A
+LEFT JOIN ANIMAL_OUTS B
+ ON A.HOUR = TO_CHAR(B.DATETIME,'HH24')
+GROUP BY A.HOUR
+ORDER BY A.HOUR
+
+```
+
