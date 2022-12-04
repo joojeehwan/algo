@@ -59,11 +59,11 @@ r = len(nums) - 1
 result = 0
 while l <= r:
     mid = (l + r) // 2
-if nums[mid] >= n:
-    result = mid
-    r = mid - 1
-else:
-    l = mid + 1
+    if nums[mid] >= n:
+        result = mid
+        r = mid - 1
+    else:
+        l = mid + 1
 
 print(result)
 
