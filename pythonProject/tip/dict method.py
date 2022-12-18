@@ -18,6 +18,29 @@ d = dict(name="사용자", email="user@test.com", age=25)
 e = dict([("name", "사용자"), ("email", "user@test.com"), ("age", 25)])
 
 
+# fromkeys
+
+'''
+
+dict.fromkeys(seq, value)
+딕셔너리를 생성할 때 편리하게 사용할 수 있는 메소드. seq 옵션 값에 문자열을 입력할 수도 있다.
+seq: 생성하려는 dictionary의 키(key)의 목록
+value: 생성하려는 dictionary의 값(value)
+
+'''
+
+seq = ('name', 'age', 'sex')
+
+dict_1 = dict.fromkeys(seq)
+print(dict_1)
+
+dict_2 = dict.fromkeys(seq, 10)
+print(dict_2)
+
+## result ##
+#{'age':None, 'name':None, 'sex':None}
+#{'age':10, 'name':10, 'sex':10}
+
 # 데이터 추가
 
 '''
@@ -69,12 +92,149 @@ print(user)
 
 '''
 del 키워드를 사용해서 특정 키와 값의 쌍을 사전에서 제거할 수 있습니다.
+
+Remove all items from a dictionary: clear()
+Remove an item by a key and return a value: pop()
+Remove an item and return a key and value: popitem()
+Remove an item by a key from a dictionary: del
+Remove items that meet the condition: Dictionary comprehensions
+
 '''
 
+## del
 del user["email"]
 print(user)
 #{'name': '사용자', 'age': 31}
 
+d = {'k1': 1, 'k2': 2, 'k3': 3}
+
+
+## clear()
+d.clear()
+print(d)
+# {}
+
+## pop()
+
+d = {'k1': 1, 'k2': 2, 'k3': 3}
+
+removed_value = d.pop('k1')
+print(d)
+# {'k2': 2, 'k3': 3}
+
+print(removed_value)
+# 1
+
+#By default, specifying a non-existent key raises KeyError.
+
+d = {'k1': 1, 'k2': 2, 'k3': 3}
+
+# removed_value = d.pop('k4')
+# print(d)
+# KeyError: 'k4'
+
+'''
+
+source: dict_clear_pop_popitem_del.py
+If the second argument is specified, its value is returned if the key does not exist. The dictionary itself remains unchanged.
+
+'''
+
+d = {'k1': 1, 'k2': 2, 'k3': 3}
+
+removed_value = d.pop('k4', None)
+print(d)
+# {'k1': 1, 'k2': 2, 'k3': 3}
+
+print(removed_value)
+# None
+
+
+## popitem()
+
+'''
+
+The popitem() method removes an item from a dictionary and returns a tuple of its key and value (key, value). You cannot specify which item to remove.
+
+An error KeyError is raised for an empty dictionary.
+
+'''
+
+d = {'k1': 1, 'k2': 2}
+
+k, v = d.popitem()
+print(k)
+print(v)
+print(d)
+# k2
+# 2
+# {'k1': 1}
+
+k, v = d.popitem()
+print(k)
+print(v)
+print(d)
+# k1
+# 1
+# {}
+
+# k, v = d.popitem()
+# KeyError: 'popitem(): dictionary is empty'
+
+
+## Remove items that meet the condition: Dictionary comprehensions
+
+'''
+To remove items that satisfy the conditions from a dictionary, use dictionary comprehensions, the dictionary version of list comprehensions.
+
+List comprehensions in Python
+"Removing items that meet the condition" is the same as "extracting items that do not meet the condition".
+
+For example, to remove items with an odd value, you can extract items with an even value. The same applies to the opposite case.
+
+'''
+
+d = {'apple': 1, 'banana': 10, 'orange': 100}
+
+dc = {k: v for k, v in d.items() if v % 2 == 0}
+print(dc)
+# {'banana': 10, 'orange': 100}
+
+dc = {k: v for k, v in d.items() if v % 2 == 1}
+print(dc)
+# {'apple': 1}
+
+
+'''
+
+The items() method of dict is used to extract keys and values.
+
+Iterate dictionary (key and value) with for loop in Python
+It is also possible to specify conditions for keys.
+
+
+'''
+
+dc = {k: v for k, v in d.items() if k.endswith('e')}
+print(dc)
+# {'apple': 1, 'orange': 100}
+
+dc = {k: v for k, v in d.items() if not k.endswith('e')}
+print(dc)
+# {'banana': 10}
+
+'''
+
+You can also use and and or to specify multiple conditions.
+
+Boolean operators in Python (and, or, not)
+
+
+'''
+
+dc = {k: v for k, v in d.items() if v % 2 == 0 and k.endswith('e')}
+print(dc)
+# {'orange': 100}
 
 
 #데이터 순회
