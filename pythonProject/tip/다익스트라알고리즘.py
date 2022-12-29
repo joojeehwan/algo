@@ -136,3 +136,49 @@ print(distance)
 # 3 4 2
 # 예시를 입력하면 아래와 같이 나온다. 0번 인덱스는 편의상 만든 것이기에 무시하면 되고, 예상했던대로 0 1 2 4 INF 가 나오는것을 확인할 수 있다.
 # [100000000.0, 0, 1, 2, 4, 100000000.0]
+
+
+#변수명 이렇게 설정하자
+
+import sys
+import heapq
+
+INF = int(1e9)
+input = sys.stdin.readline
+
+N, M = map(int, input().split())
+
+MAP = [[] for _ in range(N + 1)]
+
+# 초기 값 세팅
+for _ in range(M):
+    # 무방향 그래프 가정
+    frm, to, value = map(int, input().split())
+    MAP[frm].append((to, value))
+    MAP[to].append((frm, value))
+
+# 1번 노드에서 부터 시작한다고 가정
+
+distance = [INF] * (N + 1)
+
+
+def dijkstra(start):
+    q = []
+    heapq.heapqpush(q, (0, start))
+    distance[stat] = 0
+    while q:
+
+        value, now_node = heapq.heappop(q)
+
+        if distance[now_node] < value:
+            continue
+
+        for next_node, next_value in MAP[now_node]:
+
+            cost = value + next_value
+
+            if cost < distance[next_node]:
+                distance[next_node] = cost
+                heapq.heapqpush(q, (cost, next_node))
+
+    return distance
