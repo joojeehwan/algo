@@ -165,7 +165,7 @@ distance = [INF] * (N + 1)
 def dijkstra(start):
     q = []
     heapq.heapqpush(q, (0, start))
-    distance[stat] = 0
+    distance[start] = 0
     while q:
 
         value, now_node = heapq.heappop(q)
